@@ -23,11 +23,11 @@
                     <div class="sb-sidenav-menu">
                         <div class="nav">
                             <div class="sb-sidenav-menu-heading">Menu</div>
-                            <a class="nav-link" href="{% url 'employer_dashboard' %}">
+                            <a class="nav-link" href="{% url 'home' %}">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Dashboard
                             </a>
-                            <a class="nav-link" href="charts.html">
+                            <a class="nav-link" href="#">
                                 <div class="sb-nav-link-icon"><i class="far fa-envelope"></i></div>
                                 Chat
                             </a>
@@ -47,7 +47,6 @@
                 <main>
                     <div class="container-fluid px-4">
                         {% block content %}{% endblock %}
-                        
                     </div>
                 </main>
                 <footer class="py-4 bg-light mt-auto">
