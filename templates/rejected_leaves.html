@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Rejected Leaves{% endblock %}
+
+{% block content %}
+
+<h1 class="mt-4">Rejected Leaves</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="{% url 'employer_dashboard' %}">Dashboard</a></li>
+    <li class="breadcrumb-item active">Rejected Leaves</li>
+</ol>
+
+<h3 class="mb-4 mt-4">Rejected Leaves ({{ leaves.count }})</h3>
+
+<table class="table">
+	<thead class="table-light">
+        <tr>
+            <th>Employee</th>
+            <th>Leave Type</th>
+            <th>From</th>
+            <th>To</th>
+            <th>No of Days</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+    	{% for leave in leaves %}
+        <tr>
+            <td>{{ leave.user.get_full_name|default:leave.user.username|title }}</td>
+            <td>{{ leave.leave_type }}</td>
+            <td>{{ leave.start_date }}</td>
+            <td>{{ leave.end_date }}</td>
+            <td>{{ leave.leave_days }} days</td>
+            <td><a href="{% url 'leave_detail' leave.pk %}">View</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock content %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}Apply for Leave{% endblock %}
+
+{% block content %}
+
+<h1 class="mt-4">Leave Application</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="{% url 'employee_dashboard' %}">Dashboard</a></li>
+    <li class="breadcrumb-item active">Apply for Leave</li>
+</ol>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <form method="post" action=".">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <div class="submit-section">
+                <button class="btn btn-primary submit-btn">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

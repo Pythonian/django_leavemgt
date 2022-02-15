@@ -1,0 +1,27 @@
+{% extends "registration/_base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="card mt-5">
+    <div class="card-header">
+        <h3>Login</h3>
+        <p>Access to your dashboard</p>
+    </div>
+    <div class="card-body">
+        <form action="." method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <div class="form-group text-center">
+                <button class="btn btn-primary account-btn" type="submit">Login</button>
+            </div>
+        </form>
+    </div>
+    <div class="card-footer py-3">
+        <p>Don't have an account yet?</p>
+        <a href="{% url 'employee_signup' %}">Register as an Employee</a> | 
+        <a href="{% url 'employer_signup' %}" class="text-color hover-underline">Register as an Employer</a>
+    </div>
+</div>
+
+{% endblock %}
