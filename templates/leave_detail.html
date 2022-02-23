@@ -1,186 +1,75 @@
 {% extends 'base.html' %}
-
-{% block title %} {{ leave.user }} request{% endblock %}
-
 {% load crispy_forms_tags %}
 
-  {% block stylesheet %}
-    .rounded-circle-image{
-    border-radius: 50% !important;
-    width:250px;
-    height:250px;
-  }
+{% block title %} {{ leave.user|title }} Leave Request{% endblock %}
 
-  .form-wrapper{
-  background:#fff;
-  -webkit-box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
-  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
+{% block content %}
 
-  padding-top: 2rem;
-  padding-bottom: 2rem;
+<h1 class="mt-4">{{ leave.user|title }} Leave Request</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="{% url 'home' %}">Dashboard</a></li>
+    <li class="breadcrumb-item active">Leave Request</li>
+</ol>
 
-}
+{% if messages %}
+    {% for message in messages %}
+     <div class="alert alert-{% if message.tags %}{{ message.tags}}{% endif %} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+{% endif %}
 
+<div class="row mb-5">
+    <div class="col-md-8 offset-md-2">
+        <div class="card mb-2">
+            <div class="card-header">
+                Featured
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Start Date
+                    <span>{{ leave.start_date }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    End Date
+                    <span>{{ leave.end_date }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Number of days
+                    <span>{{ leave.leave_days }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Leave Type
+                    <span>{{ leave.get_leave_type_display }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Reason
+                    <span>{{ leave.reason }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Status
+                    <span>{{ leave.get_status_display }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Request sent on
+                    <span>{{ leave.created|date:"F j, Y" }}</span>
+                </li>
+            </ul>
+        </div>
 
-.list-group {
-  margin-top: 10px;
-}
-
-span{
-  color: #6f6f6f;
-  font-weight: lighter;
-  font-size: 16px;
-}
-
-
-.list-group-item {
-    position: relative;
-    display: block;
-    padding: 10px 15px;
-    margin-bottom: -1px;
-    background-color: #fff;
-    border: 1px solid transparent;
-    font-size:17px;
-}
-
-  #override-start{
-    background:none !important;
-    top: 35% !important;
-    right:13px;
-    color:#000;
-    font-size: 24px;
-
-    }
-
-    .alert-warning{
-        background:#fd7b7b;
-    }
-
-    .alert-success {
-        background-color: #82b72a;
-    }
-
-    .alert-success,.alert-warning{
-        font-size:16px;
-    }
-
-    .employee-name-title{
-    color: #3873b1;
-    font-weight: 600;
-    font-variant: petite-caps;
-    font-size: 3.1rem !important;
-  }
-
-  span,.list-group-item > div{
-  font-variant: petite-caps;
-}
-
-
-.panel-default>.panel-heading {
-    color: #fff !important;
-    background-color: #2d88a9 !important;
-}
-
-.panel-title a:hover{
-  color:#e6e4e4;
-}
-
-.panel-title a:active{
-  color:#e6e4e4;
-}
-
-.panel-title a:focus{
-  color:#e6e4e4;
-}
-
-
-
-  {% endblock %}
-
-
-  
-
- {% block content %}
-        <section class="content">
-            <section class="container-fluid">
-           
-                <section class="form-wrapper">
-                    <section class="row">
-                        <section class="col col-lg-8 col-md-12  col-sm-12">
-
-                            {% if  messages %}
-                                    {% for message in messages %}
-                                     <div {% if message.tags %} class="{{ message.tags}}"{% endif %}>
-                                         {{ message }}
-                                         <button type="button" class="close" id = "override-start"data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span>
-                                         </button>
-                                     </div>
-                                    {% endfor %}
-                            {% endif %}
-
-                        </section>
-                    </section>
-
-                    <section class="row">
-                        <section class="col-lg-12 col-md-12 col-sm-12 text-center space-margin">
-                            <h3 class="title-h3">{{ employee.get_full_name }}</h3>
-                        </section>
-                    </section>
-
-                    <section class="row">
-                        <section class="col-lg-4 text-center">
-                          <img src="{{ employee.image.url}}"  class="img-fluid rounded-circle-image">
-                        </section>
-                        <section class="col-lg-8 col-md-12 col-sm-12">
-                                    <div class="list-group" id="list-tab" role="tablist">
-                                            <a class="list-group-item list-group-item-action" id="list-home-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Employee</span> <div>{{ employee.get_full_name }}</div>
-                                            </a>
-                                            <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Start Date</span> <div> Start Date {{ leave.startdate }}</div>
-                                            </a>
-                                            <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" href="" role="tab" aria-controls=""><span>End Date</span><div>{{ leave.enddate}}</div>
-                                            </a>
-                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Duration</span> <div>{{ leave.leave_days}}</div>
-                                            </a>
-                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Type</span> <div>{{ leave.leavetype}}</div>
-                                            </a>
-                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Reason</span> <div>{{ leave.reason}}</div>
-                                            </a>
-                                             <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Status</span> <div>{{ leave.status}}</div>
-                                             </a>
-
-                                       
-                                      </div>
-
-                        </section>
-                    </section>
-
-
-                             
-                                  <span style="font-size: 13px;padding-left: 1rem;" class="pull-left">Created {{ leave.created }}</span>
-                              
-
-              {% if request.user.is_superuser and request.user.is_staff %}
-
-                    <section class="row">
-                      <section class="col col-lg-4 col-sm-12 col-lg-offset-7 text-center">
-                        <div class="btn-group btn-group-justified">
-                          {%if leave.leave_approved %}
-                          <a href="{% url 'dashboard:userleaveunapprove' leave.id %}" class="btn btn-primary" name='unapprove'>UNAPPROVE
-                          </a>
-                          {% else %}
-                          <a href="{% url 'dashboard:userleaveapprove' leave.id %}" class="btn btn-primary" name='approve'>APPROVE
-                          </a>
-                          {% endif %}
-                          <a href="{% url 'dashboard:userleavecancel' leave.id %}" class="btn btn-info" name='cancel'>CANCEL</a>
-                          <a href="{% url 'dashboard:reject' leave.id %}" class="btn btn-warning" name='reject'>REJECT</a>  
-                        </div>
-                      </section>
-                    </section>
-
-              {% endif %}
-
-                </section>
-
-            </section> <!-- /container --> 
-        </section>
- {% endblock %}
+        {% if request.user.is_employer %}
+        <div class="btn-group btn-group-justified">
+            {% if not leave.is_approved and leave.is_rejected %}
+            <a href="{% url 'leave_approve' leave.pk %}" class="btn btn-success">Approve Request</a>
+            <a href="{% url 'leave_reject' leave.pk %}" class="btn btn-danger">Reject Request</a>
+            {% else %}
+            <a href="{% url 'leave_unapprove' leave.pk %}" class="btn btn-info">Unapprove Request</a>
+            {% endif %}
+        </div>
+        {% else %}
+            <a href="{% url 'leave_delete' leave.pk %}" class="btn btn-danger">Delete Request</a>
+        {% endif %}
+    </div>
+</div>                              
+{% endblock %}

@@ -83,6 +83,7 @@ class Leave(models.Model):
     status = models.CharField(
         max_length=1, choices=LEAVE_STATUS, default=PENDING)
     is_approved = models.BooleanField(default=False)
+    # is_rejected = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -106,29 +107,29 @@ class Leave(models.Model):
 
     @property
     def remaining_days(self):
-        # remaining = None
+        # remaining = ''
         # if self.is_approved:
         remaining = (
             datetime.datetime.now().date() - self.end_date).days
         return str(remaining)
 
-    # @property
-    # def leave_approved(self):
-    #     return self.is_approved == True
+    @property
+    def leave_approved(self):
+        return self.is_approved == True
 
-    # @property
-    # def approve_leave(self):
-    #     if not self.is_approved:
-    #         self.is_approved = True
-    #         self.status = 'approved'
-    #         self.save()
+    @property
+    def approve_leave(self):
+        if not self.is_approved:
+            self.is_approved = True
+            self.status = 'A'
+            self.save()
 
-    # @property
-    # def unapprove_leave(self):
-    #     if self.is_approved:
-    #         self.is_approved = False
-    #         self.status = 'pending'
-    #         self.save()
+    @property
+    def unapprove_leave(self):
+        if self.is_approved:
+            self.is_approved = False
+            self.status = 'P'
+            self.save()
 
     # @property
     # def leaves_cancel(self):
@@ -137,13 +138,13 @@ class Leave(models.Model):
     #         self.status = 'cancelled'
     #         self.save()
 
-    # @property
-    # def reject_leave(self):
-    #     if self.is_approved or not self.is_approved:
-    #         self.is_approved = False
-    #         self.status = 'rejected'
-    #         self.save()
+    @property
+    def reject_leave(self):
+        if self.is_approved or not self.is_approved:
+            self.is_approved = False
+            self.status = 'R'
+            self.save()
 
-    # @property
-    # def is_rejected(self):
-    #     return self.status == 'rejected'
+    @property
+    def is_rejected(self):
+        return self.status == 'R'

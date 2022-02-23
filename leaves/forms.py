@@ -67,3 +67,9 @@ class LeaveForm(forms.ModelForm):
             # TRUE -> FUTURE DATE > PAST DATE,FALSE other wise
             raise forms.ValidationError("Selected dates are wrong")
         return end_date
+
+
+class LeaveDeleteForm(forms.ModelForm):
+    class Meta:
+        model = Leave
+        fields = []

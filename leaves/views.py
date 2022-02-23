@@ -4,7 +4,9 @@ from django.views.generic import CreateView
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from .models import Leave, User, Type
-from .forms import EmployerSignUpForm, EmployeeSignUpForm, LeaveForm
+from .forms import (
+    EmployerSignUpForm, EmployeeSignUpForm, LeaveForm,
+    LeaveDeleteForm)
 
 
 @login_required
@@ -93,18 +95,26 @@ def leave_types(request):
 @login_required
 def leave_detail(request, pk):
     leave = get_object_or_404(Leave, pk=pk)
-    # print(leave.user)
-    # employee = Employee.objects.filter(user = leave.user)[0]
-    # print(employee)
-    return render(
-        request, 'dashboard/leave_detail_view.html',
-        {'leave': leave, 'employee': employee,
-         'title': '{0}-{1} leave'.format(
-            leave.user.username,leave.status)})
-
     return render(
         request, 'leave_detail.html',
         {'leave': leave})
+
+
+@login_required
+def leave_delete(request, pk):
+    leave = get_object_or_404(Leave, pk=pk)
+    if request.method == 'POST':
+        form = LeaveDeleteForm(request.POST, instance=leave)
+        if form.is_valid():
+            leave.delete()
+            messages.success(
+                request, "Leave application successfully deleted.")
+            return redirect('home')
+    else:
+        form = LeaveDeleteForm(instance=leave)
+    return render(
+        request, 'leave_delete_confirm.html',
+        {'leave': leave, 'form': form})
 
 
 @login_required
@@ -140,16 +150,32 @@ def create_leave(request):
         {'form': form})
 
 
-# def approve_leave(request,id):
-#     if not (request.user.is_superuser and request.user.is_authenticated):
-#         return redirect('/')
-#     leave = get_object_or_404(Leave, id = id)
-#     user = leave.user
-#     employee = Employee.objects.filter(user = user)[0]
-#     leave.approve_leave
+@login_required
+def leave_approve(request, pk):
+    if not request.user.is_employer:
+        return redirect('home')
+    leave = get_object_or_404(Leave, pk=pk)
+    leave.approve_leave
+    messages.success(request, f'Leave successfully approved for {leave.user}')
+    return redirect('leave_detail', pk=pk)
 
-#     messages.error(request,'Leave successfully approved for {0}'.format(employee.get_full_name),extra_tags = 'alert alert-success alert-dismissible show')
-#     return redirect('dashboard:userleaveview', id = id)
+
+def leave_unapprove(request, pk):
+    if not request.user.is_employer:
+        return redirect('home')
+    leave = get_object_or_404(Leave, pk=pk)
+    leave.unapprove_leave
+    messages.success(request, f'Leave request has been unapproved')
+    return redirect('leave_detail', pk=pk)
+
+
+def leave_reject(request, pk):
+    if not request.user.is_employer:
+        return redirect('home')
+    leave = get_object_or_404(Leave, pk=pk)
+    leave.reject_leave
+    messages.success(request, 'Leave request has been rejected')
+    return redirect('leave_detail', pk=pk)
 
 
 # def cancel_leaves_list(request):
@@ -159,12 +185,6 @@ def create_leave(request):
 #     return render(request,'dashboard/leaves_cancel.html',{'leave_list_cancel':leaves,'title':'Cancel leave list'})
 
 
-# def unapprove_leave(request,id):
-#     if not (request.user.is_authenticated and request.user.is_superuser):
-#         return redirect('/')
-#     leave = get_object_or_404(Leave, id = id)
-#     leave.unapprove_leave
-#     return redirect('dashboard:leaveslist') #redirect to unapproved list
 
 
 # def cancel_leave(request,id):
@@ -189,14 +209,6 @@ def create_leave(request):
 #         request,'Leave is uncanceled,now in pending list')
 #     #work on redirecting to instance leave - detail view
 #     return redirect('dashboard:canceleaveslist')
-
-
-# def reject_leave(request,id):
-#     dataset = dict()
-#     leave = get_object_or_404(Leave, id = id)
-#     leave.reject_leave
-#     messages.success(request,'Leave is rejected')
-#     return redirect('dashboard:leavesrejected')
 
 #     # return HttpResponse(id)
 

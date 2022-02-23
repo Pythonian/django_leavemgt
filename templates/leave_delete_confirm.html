@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}Delete {{ leave.user|title }} Leave Request{% endblock %}
+
+{% block content %}
+
+<h1 class="mt-4">Delete {{ leave.user|title }} Leave Request</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="{% url 'home' %}">Dashboard</a></li>
+    <li class="breadcrumb-item active">Delete Leave Request</li>
+</ol>
+
+<form action="" method="post">
+{% csrf_token %}
+
+{{ form }}
+<p>Are you sure you want to delete this <a href="{% url 'leave_detail' leave.pk %}">leave request</a>?</p>
+
+<button class="btn btn-danger" type="submit">Delete</button>
+<a class="btn btn-primary" href="{% url 'leave_detail' leave.pk %}">Cancel</a>
+</form>
+
+{% endblock %}
