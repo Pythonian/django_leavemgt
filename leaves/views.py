@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.conf import settings
+from django.core.mail import send_mail, mail_admins
 from django.views.generic import CreateView
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from .models import Leave, User, Type
+from .models import Leave, User
 from .forms import (
     EmployerSignUpForm, EmployeeSignUpForm, LeaveForm,
     LeaveDeleteForm)
@@ -57,6 +59,16 @@ def employer_dashboard(request):
 
 
 @login_required
+def employee_dashboard(request):
+    leaves = Leave.objects.filter(user=request.user)
+    # last_leave = Leave.objects.filter(user=request.user).latest()
+
+    return render(
+        request, 'employee_dashboard.html',
+        {'leaves': leaves})
+
+
+@login_required
 def pending_leaves(request):
     leaves = Leave.objects.all_pending_leaves()
 
@@ -84,12 +96,32 @@ def rejected_leaves(request):
 
 
 @login_required
-def leave_types(request):
-    leave_types = Type.objects.all()
+def create_leave(request):
+    if request.method == 'POST':
+        form = LeaveForm(request.POST)
+        if form.is_valid():
+            leave = form.save(commit=False)
+            leave.user = request.user
+            leave.save()
+            messages.success(
+                request, 'Leave Request Sent, Wait For Response')
+            from_email = leave.user.email
+            to_email = settings.DEFAULT_FROM_EMAIL
+            send_mail(
+                'A New Leave Application',
+                'Check your dashboard for a new Leave application.',
+                from_email,
+                [to_email])
+            return redirect('employee_dashboard')
+        else:
+            messages.warning(
+                request, 'Error! Check form for messages')
+    else:
+        form = LeaveForm()
 
     return render(
-        request, 'leave_types.html',
-        {'leave_types': leave_types})
+        request, 'apply_leave_form.html',
+        {'form': form})
 
 
 @login_required
@@ -118,54 +150,19 @@ def leave_delete(request, pk):
 
 
 @login_required
-def employee_dashboard(request):
-    leaves = Leave.objects.filter(user=request.user)
-    last_leave = Leave.objects.filter(user=request.user).latest()
-
-    return render(
-        request, 'employee_dashboard.html',
-        {'leaves': leaves,
-         'last_leave': last_leave})
-
-
-@login_required
-def create_leave(request):
-    if request.method == 'POST':
-        form = LeaveForm(request.POST)
-        if form.is_valid():
-            leave = form.save(commit=False)
-            leave.user = request.user
-            leave.save()
-            messages.success(
-                request, 'Leave Request Sent, Wait For Response')
-            return redirect('employee_dashboard')
-        messages.error(
-            request, 'Error! Check form for messages')
-        return redirect('employee_dashboard')
-    else:
-        form = LeaveForm()
-
-    return render(
-        request, 'apply_leave_form.html',
-        {'form': form})
-
-
-@login_required
 def leave_approve(request, pk):
     if not request.user.is_employer:
         return redirect('home')
     leave = get_object_or_404(Leave, pk=pk)
     leave.approve_leave
     messages.success(request, f'Leave successfully approved for {leave.user}')
-    return redirect('leave_detail', pk=pk)
-
-
-def leave_unapprove(request, pk):
-    if not request.user.is_employer:
-        return redirect('home')
-    leave = get_object_or_404(Leave, pk=pk)
-    leave.unapprove_leave
-    messages.success(request, f'Leave request has been unapproved')
+    from_email = settings.DEFAULT_FROM_EMAIL
+    to_email = leave.user.email
+    send_mail(
+        'Leave Approved',
+        'Your Leave Request Has Now Been Successfully Approved.',
+        from_email,
+        [to_email])
     return redirect('leave_detail', pk=pk)
 
 
@@ -175,68 +172,11 @@ def leave_reject(request, pk):
     leave = get_object_or_404(Leave, pk=pk)
     leave.reject_leave
     messages.success(request, 'Leave request has been rejected')
+    from_email = settings.DEFAULT_FROM_EMAIL
+    to_email = leave.user.email
+    send_mail(
+        'Leave Rejected',
+        'Your Leave Request Has Unfortunately Been Rejected.',
+        from_email,
+        [to_email])
     return redirect('leave_detail', pk=pk)
-
-
-# def cancel_leaves_list(request):
-#     if not (request.user.is_superuser and request.user.is_authenticated):
-#         return redirect('/')
-#     leaves = Leave.objects.all_cancel_leaves()
-#     return render(request,'dashboard/leaves_cancel.html',{'leave_list_cancel':leaves,'title':'Cancel leave list'})
-
-
-
-
-# def cancel_leave(request,id):
-#     if not (request.user.is_superuser and request.user.is_authenticated):
-#         return redirect('/')
-#     leave = get_object_or_404(Leave, id = id)
-#     leave.leaves_cancel
-
-#     messages.success(request,'Leave is canceled',extra_tags = 'alert alert-success alert-dismissible show')
-#     return redirect('dashboard:canceleaveslist')#work on redirecting to instance leave - detail view
-
-
-# # Current section -> here
-# def uncancel_leave(request,id):
-#     if not (request.user.is_superuser and request.user.is_authenticated):
-#         return redirect('/')
-#     leave = get_object_or_404(Leave, id = id)
-#     leave.status = 'pending'
-#     leave.is_approved = False
-#     leave.save()
-#     messages.success(
-#         request,'Leave is uncanceled,now in pending list')
-#     #work on redirecting to instance leave - detail view
-#     return redirect('dashboard:canceleaveslist')
-
-#     # return HttpResponse(id)
-
-
-# def unreject_leave(request,id):
-#     leave = get_object_or_404(Leave, id = id)
-#     leave.status = 'pending'
-#     leave.is_approved = False
-#     leave.save()
-#     messages.success(
-#         request, 'Leave is now in pending list')
-
-#     return redirect('dashboard:leavesrejected')
-
-
-
-# #  staffs leaves table user only
-# def view_my_leave_table(request):
-#     # work on the logics
-#     if request.user.is_authenticated:
-#         user = request.user
-#         leaves = Leave.objects.filter(user = user)
-#         employee = Employee.objects.filter(user = user).first()
-#         print(leaves)
-#         dataset = dict()
-#         dataset['leave_list'] = leaves
-#         dataset['employee'] = employee
-#         dataset['title'] = 'Leaves List'
-#     else:
-#         return redirect('accounts:login')
-#     return render(request,'dashboard/staff_leaves_table.html',dataset)

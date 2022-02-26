@@ -1,7 +1,6 @@
 from django.contrib import admin
 
-from .models import Leave, User, Type
+from .models import Leave, User
 
 admin.site.register(User)
-admin.site.register(Type)
 admin.site.register(Leave)

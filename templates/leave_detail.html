@@ -60,17 +60,13 @@
 
         {% if request.user.is_employer %}
         <div class="btn-group btn-group-justified">
-            {% if not leave.is_approved %}
+            {% if leave.leave_pending %}
             <a href="{% url 'leave_approve' leave.pk %}" class="btn btn-success">Approve Request</a>
-            {% else %}
-            <a href="{% url 'leave_unapprove' leave.pk %}" class="btn btn-info">Unapprove Request</a>
-            {% endif %}
-            {% if not leave.is_approved and not leave.is_rejected %}
             <a href="{% url 'leave_reject' leave.pk %}" class="btn btn-danger">Reject Request</a>
             {% endif %}
         </div>
         {% else %}
-            <a href="{% url 'leave_delete' leave.pk %}" class="btn btn-danger">Delete Request</a>
+            <a href="{% url 'leave_delete' leave.pk %}" class="btn btn-danger">Cancel Request</a>
         {% endif %}
     </div>
 </div>                              

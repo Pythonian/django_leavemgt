@@ -31,27 +31,14 @@ class EmployeeProfile(models.Model):
         return f"Profile for {self.user.username}"
 
 
-class Type(models.Model):
-    name = models.CharField('Leave Type', max_length=15)
-    created = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ['name']
-
-    def __str__(self):
-        return self.name
-
-
 class Leave(models.Model):
     PENDING = 'P'
     APPROVED = 'A'
     REJECTED = 'R'
-    CANCELLED = 'C'
     LEAVE_STATUS = (
         (PENDING, 'Pending'),
         (APPROVED, 'Approved'),
         (REJECTED, 'Rejected'),
-        (CANCELLED, 'Cancelled'),
     )
 
     SICK = 'sick'
@@ -118,6 +105,10 @@ class Leave(models.Model):
         return self.is_approved == True
 
     @property
+    def leave_pending(self):
+        return self.status == 'P'
+
+    @property
     def approve_leave(self):
         if not self.is_approved:
             self.is_approved = True
@@ -125,26 +116,8 @@ class Leave(models.Model):
             self.save()
 
     @property
-    def unapprove_leave(self):
-        if self.is_approved:
-            self.is_approved = False
-            self.status = 'P'
-            self.save()
-
-    # @property
-    # def leaves_cancel(self):
-    #     if self.is_approved or not self.is_approved:
-    #         self.is_approved = False
-    #         self.status = 'cancelled'
-    #         self.save()
-
-    @property
     def reject_leave(self):
         if self.is_approved or not self.is_approved:
             self.is_approved = False
             self.status = 'R'
             self.save()
-
-    @property
-    def is_rejected(self):
-        return self.status == 'R'
