@@ -1,18 +1,16 @@
 {% extends "base.html" %}
 
-{% block title %}Rejected Leaves{% endblock %}
+{% block title %}Rejected Leaves ({{ leaves.count }}){% endblock %}
 
 {% block content %}
 
-<h1 class="mt-4">Rejected Leaves</h1>
+<h1 class="mt-4">Rejected Leaves ({{ leaves.count }})</h1>
 <ol class="breadcrumb mb-4">
     <li class="breadcrumb-item"><a href="{% url 'employer_dashboard' %}">Dashboard</a></li>
-    <li class="breadcrumb-item active">Rejected Leaves</li>
+    <li class="breadcrumb-item active">Rejected Leaves ({{ leaves.count }})</li>
 </ol>
 
-<h3 class="mb-4 mt-4">Rejected Leaves ({{ leaves.count }})</h3>
-
-<table class="table">
+<table class="table" id="leave">
 	<thead class="table-light">
         <tr>
             <th>Employee</th>
