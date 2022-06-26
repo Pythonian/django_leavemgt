@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.conf import settings
+from django.http import JsonResponse
 from django.core.mail import send_mail, mail_admins
 from django.views.generic import CreateView
 from django.contrib.auth import login
@@ -55,7 +56,16 @@ def employer_dashboard(request):
 
     return render(
         request, 'employer_index.html',
-        {'leaves': leaves})
+        {'leaves': leaves}
+    )
+
+
+@login_required
+def json_records(request):
+    leaves = Leave.objects.all()
+    data = [leave.get_json() for leave in leaves]
+    response = {"data": data}
+    return JsonResponse(response)
 
 
 @login_required

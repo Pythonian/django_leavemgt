@@ -73,68 +73,86 @@
         <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/jq-3.6.0/jszip-2.5.0/dt-1.11.5/b-2.2.2/b-html5-2.2.2/b-print-2.2.2/datatables.min.js"></script>
         <script src="{% static 'js/scripts.js' %}"></script>
         <script>
-        document.addEventListener("DOMContentLoaded", function(event) { 
-          document.querySelector(".dateinput").datepicker({ format: "yyyy/mm/dd" });
-        });
+        
 
-        $("#leave").DataTable({
-            paging: true, // disable/enable pagination
-            pageLength: 5, // no of data per page
-            lengthChange: false, // show entries per page
-            autoWidth: true,
-            searching: true,
-            bInfo: true,
-            bSort: true,
-            dom: 'lBfrtip',
-            buttons: [
-                {
-                    extend: 'copy',
-                    text: '<i class="fas fa-clone"></i>',
-                    className: 'btn btn-secondary',
-                    titleAttr: 'Copy',
-                    // Choose columns to be copied
-                    exportOptions: {
-                        columns: [0, 1, 2, 3, 4]
+        $("#allLeaves, #pendingLeaves, #rejectedLeaves, #approvedLeaves, #employeeLeaves").each(function(){
+            $(this).DataTable({
+                
+                // Using ajax to get the records in json
+                // "ajax": "/json",
+                // "columns": [
+                //     {"data": "user"},
+                //     {"data": "leave_type"},
+                //     {"data": "start_date"},
+                //     {"data": "end_date"},
+                //     {"data": "leave_days"},
+                //     {"data": "status"},
+                // ],
+
+                paging: true, // disable/enable pagination
+                pageLength: 5, // no of data per page
+                lengthChange: false, // show entries per page
+                autoWidth: false, // control widths on columns
+                searching: true, // Enables input search form
+                bInfo: true, // Info on footer
+                bSort: true, // Enables column sorting
+                // Disabled filter on column
+                // "columnDefs": [{
+                //     "targets": [6],
+                //     "orderable": false
+                // }],
+                dom: 'lBfrtip',
+                buttons: [
+                    {
+                        extend: 'copy',
+                        text: '<i class="fas fa-clone"></i>',
+                        className: 'btn btn-secondary',
+                        titleAttr: 'Copy',
+                        // Choose columns to be copied
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4]
+                        },
                     },
-                },
-                {
-                    extend: 'excel',
-                    text: '<i class="fas fa-file-excel"></i>',
-                    className: 'btn btn-secondary',
-                    titleAttr: 'Excel',
-                    // Choose columns to export to excel
-                    exportOptions: {
-                        columns: [0, 1, 2, 3, 4]
+                    {
+                        extend: 'excel',
+                        text: '<i class="fas fa-file-excel"></i>',
+                        className: 'btn btn-secondary',
+                        titleAttr: 'Excel',
+                        // Choose columns to export to excel
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4]
+                        },
                     },
-                },
-                {
-                    extend: 'print',
-                    text: '<i class="fas fa-print"></i>',
-                    className: 'btn btn-secondary',
-                    titleAttr: 'Print',
-                    // Choose columns to be copied
-                    exportOptions: {
-                        columns: [0, 1, 2, 3]
+                    {
+                        extend: 'print',
+                        text: '<i class="fas fa-print"></i>',
+                        className: 'btn btn-secondary',
+                        titleAttr: 'Print',
+                        // Choose columns to be copied
+                        exportOptions: {
+                            columns: [0, 1, 2, 3]
+                        },
                     },
-                },
-                {
-                    extend: 'pdf',
-                    text: '<i class="fas fa-file-pdf"></i>',
-                    className: 'btn btn-secondary',
-                    titleAttr: 'PDF',
-                    // Choose columns to be downloaded to PDF
-                    exportOptions: {
-                        columns: [0, 1, 2, 3]
+                    {
+                        extend: 'pdf',
+                        text: '<i class="fas fa-file-pdf"></i>',
+                        className: 'btn btn-secondary',
+                        titleAttr: 'PDF',
+                        // Choose columns to be downloaded to PDF
+                        exportOptions: {
+                            columns: [0, 1, 2, 3]
+                        },
+                        customize: function(doc){
+                            doc.styles.tableHeader.alignment = 'center';
+                            doc.styles.tableBodyOdd.alignment = 'center';
+                            doc.styles.tableBodyEven.alignment = 'center';
+                            doc.content[1].table.widths = Array(doc.content[1].table.body[1].length + 1).join('*').split('');
+                        },
                     },
-                    customize: function(doc){
-                        doc.styles.tableHeader.alignment = 'center';
-                        doc.styles.tableBodyOdd.alignment = 'center';
-                        doc.styles.tableBodyEven.alignment = 'center';
-                        doc.content[1].table.widths = Array(doc.content[1].table.body[1].length + 1).join('*').split('');
-                    },
-                },
-            ]
-        })
+                ]
+            });
+        });
         </script>
+        {% block scripts %}{% endblock %}
     </body>
 </html>

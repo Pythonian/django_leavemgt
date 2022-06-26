@@ -22,5 +22,6 @@ urlpatterns = [
     path('leave/<int:pk>/approve/', views.leave_approve, name='leave_approve'),
     path('leave/<int:pk>/reject/', views.leave_reject, name='leave_reject'),
     path('create-leave/', views.create_leave, name='create_leave'),
+    path('json/', views.json_records, name='json_records'),
     path('', views.home, name='home'),
 ]

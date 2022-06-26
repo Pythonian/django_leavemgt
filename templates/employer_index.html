@@ -38,7 +38,7 @@
     </div>
 </div>
 
-<table class="table" id="leave">
+<table class="table" id="allLeaves">
 	<thead class="table-light">
         <tr>
             <th>Employee</th>
@@ -50,6 +50,7 @@
             <th>Action</th>
         </tr>
     </thead>
+    <!-- Comment this line if you want to get response from JSON -->
     <tbody>
     	{% for leave in leaves %}
         <tr>
@@ -63,6 +64,7 @@
         </tr>
         {% endfor %}
     </tbody>
+
 </table>
 
 

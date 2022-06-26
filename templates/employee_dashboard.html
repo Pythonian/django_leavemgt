@@ -10,20 +10,9 @@
     <li class="breadcrumb-item active">My Leaves History</li>
 </ol>
 
-{% if messages %}
-    {% for message in messages %}
-        <div class="alert alert-{% if message.tags %}{{ message.tags}}{% endif %} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    {% endfor %}
-{% endif %}
+{% include "_alerts.html" %}
 
-<!-- <div class="alert alert-info alert-dismissible fade show" role="alert">
-  You have {{ last_leave.remaining_days }} days left
-</div> -->
-
-<table class="table mb-4" id="leave">
+<table class="table mb-4" id="employeeLeaves">
     <thead class="table-light">
         <tr>
             <th>Leave Type</th>

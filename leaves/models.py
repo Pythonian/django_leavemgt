@@ -21,11 +21,18 @@ class EmployerProfile(models.Model):
 
 
 class EmployeeProfile(models.Model):
+    MALE = 'M'
+    FEMALE = 'F'
+    GENDER_CHOICES = (
+        (MALE, 'Male'),
+        (FEMALE, 'Female'),)
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
         null=True,
         related_name='employee_profile')
+    gender = models.CharField(
+        max_length=10, choices=GENDER_CHOICES)
 
     def __str__(self):
         return f"Profile for {self.user.username}"
@@ -70,7 +77,6 @@ class Leave(models.Model):
     status = models.CharField(
         max_length=1, choices=LEAVE_STATUS, default=PENDING)
     is_approved = models.BooleanField(default=False)
-    # is_rejected = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -99,6 +105,16 @@ class Leave(models.Model):
         remaining = (
             datetime.datetime.now().date() - self.end_date).days
         return str(remaining)
+
+    def get_json(self):
+        return {
+            'user': self.user.username,
+            'leave_type': self.leave_type,
+            'start_date': self.start_date,
+            'end_date': self.end_date,
+            'leave_days': self.leave_days,
+            'status': self.status,
+        }
 
     @property
     def leave_approved(self):
