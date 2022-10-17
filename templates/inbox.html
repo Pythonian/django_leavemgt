@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Chats{% endblock %}
+
+{% block styles %} 
+<style type="text/css">
+    .messages {
+        background: #fff none repeat scroll 0 0;
+        width: 40%;
+    }
+    .chat_ib {
+        width: 88%;
+    }
+    .chat_img {
+        width: 11%;
+    }
+    .message {
+        width: 60%;
+    }
+    .received_message p {
+        background: #ebebeb none repeat scroll 0 0;
+    }
+    .sent_msg p {
+        background: #05728f none repeat scroll 0 0;
+    }
+    .time_date {
+        font-size: 12px;
+    }
+    .input-group input {
+        background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+        font-size: 15px;
+        min-height: 48px;
+        outline: none;
+    }
+    .btn-send {
+        background: #05728f none repeat scroll 0 0;
+        height: 33px;
+        top: 11px;
+        width: 33px;
+    }
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<h1 class="mt-4">Chat</h1>
+<!-- <ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item active">Chat with Employees</li>
+</ol> -->
+
+<div class="my-5 border clearfix overflow-hidden">
+    <div class="messages float-start overflow-hidden border-end">
+        <div class="py-2 ps-3 overflow-hidden border-bottom">
+            <h5 class="m-auto text-success">{% if request.user.is_employer %}Employees{% else %}Admins{% endif %}</h5>
+        </div>
+        <div style="height: 550px;" class="overflow-auto">
+            {% for contact in contacts %}
+            <div class="border-bottom m-0 p-3 bg-light">
+                
+                <div class="overflow-hidden clearfix">
+                    <div class="chat_img float-start"> <img class="img-fluid rounded-circle"
+                            src="https://via.placeholder.com/50" alt="sunil"> </div>
+                    <div class="chat_ib p-0 ps-2 float-start">
+                        <h6 class="mb-2">{{ contact.username|title }}</h6>
+                        <p style="font-size: 14px;" class="m-auto text-muted"><a href="{% url 'chat' contact.pk %}">Chat with {{ contact.username|title }}</a></p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="message float-start pt-4 px-4 pb-0">
+        {% url 'inbox' as inbox_url %}{% if request.path == inbox_url %}
+        You have not selected any message
+        {% else %}
+        <div style="height: 516px;" class="overflow-auto">
+            {% include '_chat.html' %}
+            {% include '_chat.html' %}
+            {% include '_chat.html' %}
+            {% include '_chat.html' %}
+        </div>
+        <div class="position-relative border-top">
+            <div class="input-group">
+                <input type="text" class="border-0 text-muted w-100" placeholder="Type a message" />
+                <button class="position-absolute end-0 border-0 rounded-circle text-white btn-send" type="button">
+                    <i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

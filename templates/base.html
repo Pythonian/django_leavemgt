@@ -10,6 +10,7 @@
         <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/jq-3.6.0/jszip-2.5.0/dt-1.11.5/b-2.2.2/b-html5-2.2.2/b-print-2.2.2/datatables.min.css"/>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
+        {% block styles %}{% endblock %}
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -30,11 +31,12 @@
                     <div class="sb-sidenav-menu">
                         <div class="nav">
                             <div class="sb-sidenav-menu-heading">Menu</div>
-                            <a class="nav-link" href="{% url 'home' %}">
+                            
+                            <a class="nav-link " href="{% url 'home' %}">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Dashboard
                             </a>
-                            <a class="nav-link" href="#">
+                            <a class="nav-link {% url 'inbox' as inbox_url %}{% if request.path == inbox_url %}active{% endif %}" href="{% url 'inbox' %}">
                                 <div class="sb-nav-link-icon"><i class="far fa-envelope"></i></div>
                                 Chat
                             </a>

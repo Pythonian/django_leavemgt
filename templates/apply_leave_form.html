@@ -16,7 +16,31 @@
     <div class="col-md-8 offset-md-2">
         <form method="post" action=".">
             {% csrf_token %}
-            {{ form|crispy }}
+            {{ form.start_date|as_crispy_field }}
+            {{ form.end_date|as_crispy_field }}
+            
+            <div id="div_id_leave_type" class="mb-3">
+                <label for="id_leave_type" class="form-label requiredField">
+                    Leave type<span class="asteriskField">*</span>
+                </label>
+                <select name="leave_type" class="select form-select" id="id_leave_type">
+                    <option value="annual">Annual Leave</option>
+                    <option value="sick">Sick Leave</option>
+                    <option value="sabbatical">Sabbatical Leave</option>
+                    {% if request.user.employee.gender == 'F' %}
+                    <option value="maternity">Maternity Leave</option>
+                    {% else %}
+                    <option value="paternity">Paternity Leave</option>
+                    {% endif %}
+                </select>
+            </div>
+            {% if form.leave_type.errors %}
+            {% for error in form.leave_type.errors %} 
+            <p class="text-danger fw-bold">{{ error }}</p>
+            {% endfor %} 
+            {% endif %}
+            
+            {{ form.reason|as_crispy_field }}
             <div class="submit-section">
                 <button class="btn btn-primary submit-btn">Save</button>
             </div>

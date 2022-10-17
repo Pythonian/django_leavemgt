@@ -6,21 +6,21 @@ from .managers import LeaveManager
 
 
 class User(AbstractUser):
-    is_employer = models.BooleanField(default=True)
+    is_employer = models.BooleanField(default=False)
+    is_employee = models.BooleanField(default=False)
 
 
-class EmployerProfile(models.Model):
+class Employer(models.Model):
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
-        null=True,
-        related_name='employer_profile')
+        null=True, related_name='employer')
 
     def __str__(self):
         return f"Profile for {self.user.username}"
 
 
-class EmployeeProfile(models.Model):
+class Employee(models.Model):
     MALE = 'M'
     FEMALE = 'F'
     GENDER_CHOICES = (
@@ -29,8 +29,7 @@ class EmployeeProfile(models.Model):
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
-        null=True,
-        related_name='employee_profile')
+        null=True, related_name='employee')
     gender = models.CharField(
         max_length=10, choices=GENDER_CHOICES)
 
@@ -48,18 +47,16 @@ class Leave(models.Model):
         (REJECTED, 'Rejected'),
     )
 
+    ANNUAL = 'annual'
     SICK = 'sick'
-    CASUAL = 'casual'
-    EMERGENCY = 'emergency'
-    STUDY = 'study'
+    SABBATICAL = 'sabbatical'
     MATERNITY = 'maternity'
     PATERNITY = 'paternity'
 
     LEAVE_TYPE = (
+        (ANNUAL, 'Annual Leave'),
         (SICK, 'Sick Leave'),
-        (CASUAL, 'Casual Leave'),
-        (EMERGENCY, 'Emergency Leave'),
-        (STUDY, 'Study Leave'),
+        (SABBATICAL, 'Sabbatical Leave'),
         (PATERNITY, 'Paternity Leave'),
         (MATERNITY, 'Maternity Leave'),
     )
@@ -137,3 +134,17 @@ class Leave(models.Model):
             self.is_approved = False
             self.status = 'R'
             self.save()
+
+
+class Message(models.Model):
+    body = models.TextField()
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sender')
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receiver')
+    seen = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created']
+
+    def __str__(self):
+        return self.body

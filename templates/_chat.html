@@ -1,0 +1,19 @@
+{% for chat in chats %}
+{% if chat.sender == request.user and chat.receiver == contact %}
+<div class="mx-1 mt-1 mb-3 overflow-hidden">
+    <div style="width:46%" class="sent_msg float-end">
+        <p class="rounded-3 m-0 w-100 text-white px-3 py-2">{{ chat.body }}</p>
+        <span style="font-size: 12px;" class="text-muted d-block mb-2 mt-1 float-end"> {{ chat.created|time:"P" }} | {{ chat.created|date:"M Y" }}</span>
+    </div>
+</div>
+{% elif chat.sender == contact and chat.receiver == request.user %}
+<div>
+    <div style="width:92%" class="d-inline-block">
+        <div style="width:57%" class="received_message">
+            <p class="rounded-3 m-0 w-100 px-3 py-2">{{ chat.body }}</p>
+            <span style="font-size: 12px;" class="text-muted d-block mb-2 mt-1"> {{ chat.created|time:"P" }} | {{ chat.created|date:"M Y" }}</span>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endfor %}
