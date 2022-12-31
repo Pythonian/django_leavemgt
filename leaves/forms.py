@@ -130,14 +130,19 @@ class LeaveForm(forms.ModelForm):
             leave_type = self.cleaned_data['leave_type']
             
             if leave_type == Leave.PATERNITY:
-                if int(leave_days) > 14:
+                if int(leave_days) != 14:
                     raise forms.ValidationError(
                         "Paternity leave shouldn't exceed 14 days. Select new dates above.")
 
             if leave_type == Leave.SICK:
-                if int(leave_days) > 90:
+                if int(leave_days) != 90:
                     raise forms.ValidationError(
                         "Sick leave shouldn't exceed 90 days. Select new dates above.")
+
+            if leave_type == Leave.ANNUAL:
+                if int(leave_days) != 14:
+                    raise forms.ValidationError(
+                        "Annual leave shouldn't exceed 14 days. Select new dates above.")
 
             # if leave_type == Leave.ANNUAL:
             #     # No employee can apply for anual lave more than once

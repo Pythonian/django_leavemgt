@@ -1,4 +1,5 @@
 import json
+import datetime
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.conf import settings
@@ -83,11 +84,19 @@ def json_records(request):
 @login_required
 def employee_dashboard(request):
     leaves = Leave.objects.filter(user=request.user)
-    # last_leave = Leave.objects.filter(user=request.user).latest()
-
+    last_leave = Leave.objects.filter(user=request.user).latest()
+    remaining = ''
+    if last_leave.start_date == datetime.datetime.now().date():
+        remaining = (last_leave.end_date - datetime.datetime.now().date()).days
+        if remaining < 5:
+            to_email = request.user.email
+            send_mail(
+                'Leave Deadline Notification',
+                f'This is to notify you that you have less than 5 days to the end of your leave.', 'webmaster@localhost', [to_email])
+    
     return render(
         request, 'employee_dashboard.html',
-        {'leaves': leaves})
+        {'leaves': leaves, 'remaining': remaining})
 
 
 @login_required

@@ -95,14 +95,6 @@ class Leave(models.Model):
         dates = (end_date - start_date)
         return dates.days
 
-    @property
-    def remaining_days(self):
-        # remaining = ''
-        # if self.is_approved:
-        remaining = (
-            datetime.datetime.now().date() - self.end_date).days
-        return str(remaining)
-
     def get_json(self):
         return {
             'user': self.user.username,
